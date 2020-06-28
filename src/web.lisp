@@ -24,7 +24,9 @@
 ;; Routing rules
 
 (defroute "/" ()
-  (render #P"index.html"))
+  (let ((random-recipe (with-connection (db) (retrieve-one (select :* (from :recipes) (order-by '(:raw "random()")) (limit 1)))))
+        (recipe-count (with-connection (db) (retrieve-one (select (fields (:as (:count :*) :num)) (from :recipes))))))
+    (render #P"index.html" `(:recipe ,random-recipe :recipe-count ,recipe-count))))
 
 ;;
 ;; Error pages

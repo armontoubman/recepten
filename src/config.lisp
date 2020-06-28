@@ -20,10 +20,14 @@
 (defparameter *template-directory* (merge-pathnames #P"templates/" *application-root*))
 
 (defconfig :common
-  `(:databases ((:maindb :sqlite3 :database-name ":memory:"))))
+  `(:application-root ,(asdf:component-pathname (asdf:find-system :recepten))))
 
+;; start with: APP_ENV=development clackup app.lisp
 (defconfig |development|
-  '())
+  `(:debug T
+    :databases
+    ((:maindb :sqlite3 :database-name ,(merge-pathnames #P"recepten.db"
+                                                        *application-root*)))))
 
 (defconfig |production|
   '())

@@ -1,7 +1,14 @@
 {% extends "layouts/default.html" %}
 {% block title %}Welcome to Caveman2{% endblock %}
 {% block content %}
-<div id="main">
-  Welcome to <a href="http://8arrow.org/caveman/">Caveman2</a>!
-</div>
+<div class="container">
+  <div class="jumbotron">
+    <p>Probeer ook eens:</p>
+    <h1>{{ recipe.title }}</h1>
+    <p>
+      <a class="btn btn-primary btn-lg" href="/recipe/show/{{ recipe.slug }}" role="button">Recept bekijken</a>
+    </p>
+    <p>{{ recipe-count.num }} recepten</p>
+  </div>
+</div>>
 {% endblock %}
