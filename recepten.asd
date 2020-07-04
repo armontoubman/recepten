@@ -17,7 +17,10 @@
 
                ;; for DB
                "datafly"
-               "sxql")
+               "sxql"
+               
+               ;; for formatting
+               "3bmd")
   :components ((:module "src"
                 :components
                 ((:file "main" :depends-on ("config" "view" "db"))

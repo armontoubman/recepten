@@ -1,6 +1,6 @@
 (in-package :cl-user)
 (defpackage recepten.view
-  (:use :cl)
+  (:use :cl :3bmd)
   (:import-from :recepten.config
                 :*template-directory*)
   (:import-from :caveman2
@@ -10,7 +10,8 @@
                 :add-template-directory
                 :compile-template*
                 :render-template*
-                :*djula-execute-package*)
+                :*djula-execute-package*
+                :def-filter)
   (:import-from :datafly
                 :encode-json)
   (:export :render
@@ -20,6 +21,20 @@
 (djula:add-template-directory *template-directory*)
 
 (defparameter *template-registry* (make-hash-table :test 'equal))
+
+(def-filter :markdown (val)
+  (let ((output (with-output-to-string (stream)
+                  (3bmd:parse-string-and-print-to-stream val stream))))
+      output))
+
+(def-filter :total-minutes-to-only-hours (val)
+  (multiple-value-bind (quotient remainder) (truncate val 60)
+    quotient))
+
+(def-filter :total-minutes-to-only-minutes (val)
+  (multiple-value-bind (quotient remainder) (truncate val 60)
+    remainder))
+
 
 (defun render (template-path &optional env)
   (let ((template (gethash template-path *template-registry*)))

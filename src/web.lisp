@@ -26,7 +26,16 @@
 (defroute "/" ()
   (let ((random-recipe (with-connection (db) (retrieve-one (select :* (from :recipes) (order-by '(:raw "random()")) (limit 1)))))
         (recipe-count (with-connection (db) (retrieve-one (select (fields (:as (:count :*) :num)) (from :recipes))))))
-    (render #P"index.html" `(:recipe ,random-recipe :recipe-count ,recipe-count))))
+    (render #P"index.html" `(:recipe ,random-recipe 
+                             :recipe-count ,recipe-count))))
+
+(defroute "/recipe/show/:slug" (&key slug)
+  (let* ((the-recipe (with-connection (db) (retrieve-one (select :* (from :recipes) (where (:= :slug slug))))))
+         (tags (with-connection (db) (retrieve-all (select :tag (from :tags) 
+                                                               (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id))
+                                                               (where (:= :recipes_tags.recipe_id (getf the-recipe :id))))))))
+        (render #P"recipe-show.html" `(:recipe ,the-recipe
+                                       :tags ,tags))))
 
 ;;
 ;; Error pages

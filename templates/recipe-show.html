@@ -1,0 +1,29 @@
+{% extends "layouts/default.html" %}
+{% block title %}{{ recipe.title }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="pull-right">
+    <div class="list-group">
+      <a class="list-group-item" href="/recipe/print/{{ recipe.slug }}" target="_blank"><i class="glyphicon glyphicon-print"></i> Print recept</a>
+      <a class="list-group-item" href="/recipe/edit/{{ recipe.slug }}"><i class="glyphicon glyphicon-pencil"></i> Bewerk recept</a>
+      <a class="list-group-item list-group-item-danger" href="/recipe/delete/{{ recipe.slug }}"><i class="glyphicon glyphicon-trash"></i> Verwijder recept</a>
+    </div>
+  </div>
+  <h1>{{ recipe.title }}</h1>
+  <p>{% for tag in tags %}<span><a href="/tag/{{ tag.tag }}">{{ tag.tag }}</a> </span>{% endfor %}</p>
+  <p>Bereidingstijd: <span class="badge">
+        {{ recipe.cooking-time|total-minutes-to-only-hours }} uur 
+        {{ recipe.cooking-time|total-minutes-to-only-minutes }} min
+      </span> 
+     Wachttijd: <span class="badge">
+        {{ recipe.waiting-time|total-minutes-to-only-hours }} uur 
+       {{ recipe.waiting-time|total-minutes-to-only-minutes }} min
+     </span></p>
+  <h2>Ingrediënten voor {{ recipe.servings }} porties</h2>
+  {{ recipe.ingredients|markdown|safe }}
+  <h2>Bereiding</h2>
+  {{ recipe.directions|markdown|safe }}
+  <h2>Opmerkingen</h2>
+  {{ recipe.comments|markdown|safe }}
+</div>
+{% endblock %}
