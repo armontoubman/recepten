@@ -5,8 +5,12 @@
         :recepten.config
         :recepten.view
         :recepten.db
+        :recepten.logic
+        :recepten.recipe-repo
         :datafly
-        :sxql)
+        :sxql
+        :alexandria
+        :access)
   (:export :*web*))
 (in-package :recepten.web)
 
@@ -24,18 +28,25 @@
 ;; Routing rules
 
 (defroute "/" ()
-  (let ((random-recipe (with-connection (db) (retrieve-one (select :* (from :recipes) (order-by '(:raw "random()")) (limit 1)))))
-        (recipe-count (with-connection (db) (retrieve-one (select (fields (:as (:count :*) :num)) (from :recipes))))))
+  (let ((random-recipe (get-random-recipe))
+        (recipe-count (get-recipe-count)))
     (render #P"index.html" `(:recipe ,random-recipe 
                              :recipe-count ,recipe-count))))
 
 (defroute "/recipe/show/:slug" (&key slug)
-  (let* ((the-recipe (with-connection (db) (retrieve-one (select :* (from :recipes) (where (:= :slug slug))))))
+  (let* ((the-recipe (get-recipe-by-slug slug)) ; the-recipe = alist
          (tags (with-connection (db) (retrieve-all (select :tag (from :tags) 
                                                                (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id))
                                                                (where (:= :recipes_tags.recipe_id (getf the-recipe :id))))))))
         (render #P"recipe-show.html" `(:recipe ,the-recipe
                                        :tags ,tags))))
+
+(defroute ("/recipe/new" :method :GET) ()
+  (render #P"recipe-new.html" '()))
+
+(defroute ("/recipe/new" :method :POST) (&key _parsed) ; _parsed = plist
+  (let* ((the-recipe (create-recipe-from-form (accesses _parsed "recipe"))))
+    (render-json the-recipe)))
 
 ;;
 ;; Error pages
