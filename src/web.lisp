@@ -45,8 +45,11 @@
   (render #P"recipe-new.html" '()))
 
 (defroute ("/recipe/new" :method :POST) (&key _parsed) ; _parsed = plist
-  (let* ((the-recipe (create-recipe-from-form (accesses _parsed "recipe"))))
-    (render-json the-recipe)))
+  (let* ((the-recipe (create-recipe-from-form (accesses _parsed "recipe")))
+         (the-slug (create-recipe the-recipe))
+         (redirect-url (concatenate 'string "/recipe/show/" the-slug)))
+    (redirect redirect-url)))
+    
 
 ;;
 ;; Error pages

@@ -27,6 +27,12 @@
           :slug (slugify title)
           :comments (accesses the-recipe "comments"))))
 
+(defun slugify (the-string)
+  (let* ((the-string (string-trim '(#\Space #\Tab #\Newline) the-string))
+         (the-string (ppcre:regex-replace-all "&" the-string "-and-"))
+         (the-string (ppcre:regex-replace-all "[\\s\\W-]+" the-string "-")))
+    the-string))
+
 ;;;; private
 
 (defun get-string-or-default (the-string the-default)
@@ -40,10 +46,3 @@
 
 (defun split-time (time)
   (truncate time 60))
-
-(defun slugify (the-string)
-  (let* ((the-string (string-trim '(#\Space #\Tab #\Newline) the-string))
-         (the-string (ppcre:regex-replace-all "&" the-string "-and-"))
-         (the-string (ppcre:regex-replace-all "[\\s\\W-]+" the-string "-")))
-    the-string))
-   
