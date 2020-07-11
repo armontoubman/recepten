@@ -34,7 +34,7 @@
                              :recipe-count ,recipe-count))))
 
 (defroute "/recipe/show/:slug" (&key slug)
-  (let* ((the-recipe (get-recipe-by-slug slug)) ; the-recipe = alist
+  (let* ((the-recipe (get-recipe-by-slug slug)) ; the-recipe = plist
          (tags (with-connection (db) (retrieve-all (select :tag (from :tags) 
                                                                (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id))
                                                                (where (:= :recipes_tags.recipe_id (getf the-recipe :id))))))))
@@ -44,9 +44,24 @@
 (defroute ("/recipe/new" :method :GET) ()
   (render #P"recipe-new.html" '()))
 
-(defroute ("/recipe/new" :method :POST) (&key _parsed) ; _parsed = plist
+(defroute ("/recipe/new" :method :POST) (&key _parsed) ; _parsed = alist
   (let* ((the-recipe (create-recipe-from-form (accesses _parsed "recipe")))
          (the-slug (create-recipe the-recipe))
+         (redirect-url (concatenate 'string "/recipe/show/" the-slug)))
+    (redirect redirect-url)))
+
+(defroute "/recipe/edit/:slug" (&key slug)
+  (let* ((the-recipe (get-recipe-by-slug slug))
+         (tags (with-connection (db) (retrieve-all (select :tag (from :tags) 
+                                                               (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id))
+                                                               (where (:= :recipes_tags.recipe_id (getf the-recipe :id))))))))
+        (render #P"recipe-edit.html" `(:recipe ,the-recipe
+                                       :tags ,tags))))
+
+(defroute ("/recipe/edit/:slug" :method :POST) (&key slug _parsed) ; _parsed = alist
+  (let* ((current-recipe (get-recipe-by-slug slug))
+         (the-recipe (create-recipe-from-form (accesses _parsed "recipe") (getf current-recipe :id)))
+         (the-slug (update-recipe the-recipe))
          (redirect-url (concatenate 'string "/recipe/show/" the-slug)))
     (redirect redirect-url)))
     

@@ -13,7 +13,8 @@
            :get-recipe-by-id
            :get-recipe-by-slug
            :get-all-recipes
-           :create-recipe))
+           :create-recipe
+           :update-recipe))
 (in-package :recepten.recipe-repo)
 
 
@@ -42,6 +43,24 @@
                                                              :directions (getf the-recipe :directions)
                                                              :slug (getf the-recipe :slug)
                                                              :comments (getf the-recipe :comments)))))
+  (getf the-recipe :slug))
+
+(defun update-recipe (the-recipe)
+  ;; Erase own slug to make it available for itself;
+  (with-connection (db) (execute (update :recipes (set= :slug "") (where (:= :id (getf the-recipe :id))))))
+  (let* ((recipe-with-same-slug (get-recipe-by-slug (getf the-recipe :slug)))
+         (recipe-id (getf the-recipe :id))
+         (other-id (getf recipe-with-same-slug :id)))
+        (when recipe-with-same-slug (setf (getf the-recipe :slug) (incr-slug (getf the-recipe :slug) 1)))
+        (with-connection (db) (execute (update :recipes (set= :title (getf the-recipe :title)
+                                                          :ingredients (getf the-recipe :ingredients)
+                                                          :servings (getf the-recipe :servings)
+                                                          :cooking_time (getf the-recipe :cooking-time)
+                                                          :waiting_time (getf the-recipe :waiting-time)
+                                                          :directions (getf the-recipe :directions)
+                                                          :slug (getf the-recipe :slug)
+                                                          :comments (getf the-recipe :comments))
+                                                    (where (:= :id (getf the-recipe :id)))))))
   (getf the-recipe :slug))
 
 ;;;; private

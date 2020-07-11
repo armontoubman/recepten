@@ -12,10 +12,10 @@
   (:export :create-recipe-from-form))
 (in-package :recepten.logic)
 
-(defun create-recipe-from-form (the-recipe) ; the-recipe = alist
+(defun create-recipe-from-form (the-recipe &optional id) ; the-recipe = alist
   (let ((title (get-string-or-default (accesses the-recipe "title") (concatenate 'string "recept-" (write-to-string (get-universal-time))))))
     ; return plist
-    (list :id (accesses the-recipe "id")
+    (list :id (or (accesses the-recipe "id") id)
           :title title
           :ingredients (accesses the-recipe "ingredients")
           :servings (parse-integer-or-zero (accesses the-recipe "servings"))
