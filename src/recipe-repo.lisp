@@ -15,9 +15,11 @@
            :get-all-recipes
            :get-recipes-starting-with
            :create-recipe
-           :update-recipe))
+           :update-recipe
+           :get-all-tags-like))
 (in-package :recepten.recipe-repo)
 
+;;;; recipes
 
 (defun get-random-recipe ()
   (with-connection (db) (retrieve-one (select :* (from :recipes) (order-by '(:raw "random()")) (limit 1)))))
@@ -67,6 +69,12 @@
                                                           :comments (getf the-recipe :comments))
                                                     (where (:= :id (getf the-recipe :id)))))))
   (getf the-recipe :slug))
+
+;;;; tags
+
+(defun get-all-tags-like (query)
+  (let ((q (concatenate 'string "%" query "%")))
+    (with-connection (db) (retrieve-all (select :* (from :tags) (where (:like :tag q)) (order-by :tag))))))
 
 ;;;; private
   

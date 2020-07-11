@@ -73,6 +73,14 @@
     (render #P"recipes-per-letter.html" `(:recipes ,recipes
                                           :current-letter ,letter
                                           :letters ,(loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char))))))
+
+
+(defroute ("/ajax/recipe-tags-autocomplete") (&key _parsed)
+  (let ((q (accesses _parsed "term")))
+    (if (or (not q) (string= q ""))
+      (render-json (list))
+      (let ((tags (get-all-tags-like q)))
+        (render-json (loop for tag in tags collect (accesses tag :tag)))))))
     
 
 ;;
