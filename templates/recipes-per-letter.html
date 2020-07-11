@@ -1,0 +1,19 @@
+{% extends "layouts/default.html" %}
+{% block title %}Recepten{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Recepten per letter</h1>
+  <p class="text-center">
+  {% for letter in letters %}
+    <span><a href="/recipes/{{ letter|upper }}" class="btn btn-default">{{ letter|upper }}</a></span>
+  {% endfor %}
+  </p>
+  <h1>{{ current-letter }}</h1>
+  <p>{{ recipes|length }} recepten gevonden</p>
+  <p>
+  {% for recipe in recipes %}
+    <ul><li><a class="btn btn-default" role="button" href="/recipe/show/{{ recipe.slug }}">{{ recipe.title }}</a></li></ul>
+  {% endfor %}
+  </p>
+</div>
+{% endblock %}

@@ -64,6 +64,15 @@
          (the-slug (update-recipe the-recipe))
          (redirect-url (concatenate 'string "/recipe/show/" the-slug)))
     (redirect redirect-url)))
+
+(defroute ("/recipes") ()
+  (render #P"recipes-index.html" `(:letters ,(loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char)))))
+
+(defroute ("/recipes/:letter") (&key letter)
+  (let* ((recipes (get-recipes-starting-with letter)))
+    (render #P"recipes-per-letter.html" `(:recipes ,recipes
+                                          :current-letter ,letter
+                                          :letters ,(loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char))))))
     
 
 ;;

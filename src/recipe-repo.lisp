@@ -13,6 +13,7 @@
            :get-recipe-by-id
            :get-recipe-by-slug
            :get-all-recipes
+           :get-recipes-starting-with
            :create-recipe
            :update-recipe))
 (in-package :recepten.recipe-repo)
@@ -32,6 +33,10 @@
 
 (defun get-recipe-by-slug (slug)
   (with-connection (db) (retrieve-one (select :* (from :recipes) (where (:= :slug slug))))))
+
+(defun get-recipes-starting-with (letter)
+  (let ((q (concatenate 'string letter "%")))
+    (with-connection (db) (retrieve-all (select :* (from :recipes) (where (:like :title q)) (order-by :title))))))
 
 (defun create-recipe (the-recipe)
   (when (get-recipe-by-slug (getf the-recipe :slug)) (setf (getf the-recipe :slug) (incr-slug (getf the-recipe :slug) 1)))
