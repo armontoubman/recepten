@@ -2,7 +2,7 @@
 {% block title %}Recepten per letter{% endblock %}
 {% block content %}
 <div class="container">
-  <h1>Recepten per letter </h1>
+  <h1>Recepten per letter</h1>
   <p class="text-center">
   {% for letter in letters %}
     <span><a href="/recipes/{{ letter|upper }}" class="btn btn-default">{{ letter|upper }}</a></span>
