@@ -70,6 +70,11 @@
                                           :current-letter ,letter
                                           :letters ,(loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char))))))
 
+(defroute ("/tag/:tag") (&key tag)
+  (let* ((recipes (get-recipes-by-tag tag)))
+    (render #P"recipes-per-tag.html" `(:recipes ,recipes
+                                       :tag ,tag))))
+
 
 (defroute ("/ajax/recipe-tags-autocomplete") (&key _parsed)
   (let ((q (accesses _parsed "term")))

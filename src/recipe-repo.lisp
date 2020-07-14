@@ -12,9 +12,11 @@
            :get-recipe-by-slug
            :get-all-recipes
            :get-recipes-starting-with
+           :get-recipes-by-tag
            :create-recipe
            :update-recipe
-           :get-all-tags-like))
+           :get-all-tags-like
+           :get-tag-by-tag))
 (in-package :recepten.recipe-repo)
 
 ;;;; recipes
@@ -38,6 +40,14 @@
 (defun get-recipes-starting-with (letter)
   (let ((q (str:concat letter "%")))
     (with-connection (db) (retrieve-all (select :* (from :recipes) (where (:like :title q)) (order-by :title))))))
+
+(defun get-recipes-by-tag (tag)
+  (let ((the-tag (get-tag-by-tag tag)))
+    (if the-tag
+        (with-connection (db) (retrieve-all (select :* (from :recipes) (left-join :recipes_tags :on (:= :recipes.id :recipes_tags.recipe_id)) 
+                                                                      (where (:= :recipes_tags.tag_id (getf the-tag :id))) 
+                                                                      (order-by :recipes.title))))
+        (list))))
 
 (defun create-recipe (the-recipe)
   (when (get-recipe-by-slug (getf the-recipe :slug)) (setf (getf the-recipe :slug) (incr-slug (getf the-recipe :slug) 1)))
@@ -81,13 +91,17 @@
     (with-connection (db) (retrieve-all (select :* (from :tags) (where (:like :tag q)) (order-by :tag))))))
 
 (defun get-tags-by-recipe (the-recipe)
-  (with-connection (db) (retrieve-all (select (:id :tag) (from :tags) (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id)) (where (:= :recipes_tags.recipe_id (getf the-recipe :id)))))))
+  (with-connection (db) (retrieve-all (select (:id :tag) (from :tags) (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id)) 
+                                                                      (where (:= :recipes_tags.recipe_id (getf the-recipe :id)))))))
+
+(defun get-tag-by-tag (tag)
+  (with-connection (db) (retrieve-one (select :* (from :tags) (where (:= :tag tag))))))
 
 (defun create-tag (the-tag)
    (with-connection (db) 
                     (ignore-errors (execute (insert-into :tags (set= :tag (getf the-tag :tag)))))
                       ;; query was INSERT OR IGNORE, maar is niet te maken met datafly/sxql
-                    (retrieve-one (select :* (from :tags) (where (:= :tag (getf the-tag :tag)))))))
+                    (get-tag-by-tag (getf the-tag :tag))))
 
 (defun associate-tags-with-recipe (the-recipe the-tags)
   (with-connection (db) (execute (delete-from :recipes_tags (where (:= :recipe_id (getf the-recipe :id)))))

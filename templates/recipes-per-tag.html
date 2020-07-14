@@ -1,0 +1,14 @@
+{% extends "layouts/default.html" %}
+{% block title %}Recepten met tag {{ tag }}{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Recepten met tag {{ tag }}</h1>
+  <h1>{{ current-letter }}</h1>
+  <p>{{ recipes|length }} recepten gevonden</p>
+  <p>
+  {% for recipe in recipes %}
+    <ul><li><a class="btn btn-default" role="button" href="/recipe/show/{{ recipe.slug }}">{{ recipe.title }}</a></li></ul>
+  {% endfor %}
+  </p>
+</div>
+{% endblock %}
