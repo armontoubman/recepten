@@ -19,6 +19,9 @@
                "datafly"
                "sxql"
 
+               ;; string manipulation
+               "str"
+
                ;; utilities
                "alexandria"
                "access"

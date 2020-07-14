@@ -10,7 +10,7 @@
     </div>
   </div>
   <h1>{{ recipe.title }}</h1>
-  <p>{% for tag in tags %}<span><a href="/tag/{{ tag.tag }}">{{ tag.tag }}</a> </span>{% endfor %}</p>
+  <p>{% for tag in recipe.tags %}<span><a href="/tag/{{ tag.tag }}">{{ tag.tag }}</a> </span>{% endfor %}</p>
   <p>Bereidingstijd: <span class="badge">
         {{ recipe.cooking-time|total-minutes-to-only-hours }} uur 
         {{ recipe.cooking-time|total-minutes-to-only-minutes }} min

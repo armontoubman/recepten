@@ -15,7 +15,7 @@
     <div class="form-group">
       <label for="tags" class="col-sm-2 control-label">Tags</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control input-lg" id="tags" name="recipe[tags]" autocomplete="off" data-provide="typeahead" value=""/>
+        <input type="text" class="form-control input-lg" id="tags" name="recipe[tags]" autocomplete="off" data-provide="typeahead" value="{% for tag in recipe.tags %}{{ tag.tag }} {% endfor %}"/>
       </div>
     </div>
 

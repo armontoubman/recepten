@@ -51,12 +51,8 @@
     (redirect redirect-url)))
 
 (defroute "/recipe/edit/:slug" (&key slug)
-  (let* ((the-recipe (get-recipe-by-slug slug))
-         (tags (with-connection (db) (retrieve-all (select :tag (from :tags) 
-                                                               (inner-join :recipes_tags :on (:= :tags.id :recipes_tags.tag_id))
-                                                               (where (:= :recipes_tags.recipe_id (getf the-recipe :id))))))))
-        (render #P"recipe-edit.html" `(:recipe ,the-recipe
-                                       :tags ,tags))))
+  (let* ((the-recipe (get-recipe-by-slug slug)))
+        (render #P"recipe-edit.html" `(:recipe ,the-recipe))))
 
 (defroute ("/recipe/edit/:slug" :method :POST) (&key slug _parsed) ; _parsed = alist
   (let* ((current-recipe (get-recipe-by-slug slug))

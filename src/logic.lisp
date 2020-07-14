@@ -13,7 +13,7 @@
 (in-package :recepten.logic)
 
 (defun create-recipe-from-form (the-recipe &optional id) ; the-recipe = alist
-  (let ((title (get-string-or-default (accesses the-recipe "title") (concatenate 'string "recept-" (write-to-string (get-universal-time))))))
+  (let ((title (get-string-or-default (accesses the-recipe "title") (str:concat "recept-" (write-to-string (get-universal-time))))))
     ; return plist
     (list :id (or (accesses the-recipe "id") id)
           :title title
@@ -25,10 +25,11 @@
                                       (parse-integer-or-zero (accesses the-recipe "waiting-time-minutes")))
           :directions (accesses the-recipe "directions")
           :slug (slugify title)
-          :comments (accesses the-recipe "comments"))))
+          :comments (accesses the-recipe "comments")
+          :tags (loop for tag in (str:words (str:trim (accesses the-recipe "tags"))) collect `(:tag ,tag)))))
 
 (defun slugify (the-string)
-  (let* ((the-string (string-trim '(#\Space #\Tab #\Newline) the-string))
+  (let* ((the-string (str:trim the-string))
          (the-string (ppcre:regex-replace-all "&" the-string "-and-"))
          (the-string (ppcre:regex-replace-all "[\\s\\W-]+" the-string "-")))
     the-string))
