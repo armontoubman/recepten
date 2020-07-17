@@ -22,7 +22,7 @@
 (defconfig :common
   `(:application-root ,(asdf:component-pathname (asdf:find-system :recepten))))
 
-;; start with: APP_ENV=development clackup app.lisp
+;; start with: APP_ENV=development clackup --address 0.0.0.0 app.lisp
 (defconfig |development|
   `(:debug T
     :databases
