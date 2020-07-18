@@ -76,6 +76,10 @@
   (let ((the-recipe (get-recipe-by-slug slug)))
     (render #P"recipe-print.html" `(:recipe ,the-recipe :no-nav ,t))))
 
+(defroute ("/recipe/search") (&key (|q| ""))
+  (let ((recipes (get-recipes-by-search-query |q|)))
+    (render #P"recipe-search.html" `(:query ,|q| :recipes ,recipes))))
+
 (defroute ("/recipes") ()
   (render #P"recipes-index.html" `(:letters ,*the-alphabet*)))
 

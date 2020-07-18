@@ -13,6 +13,7 @@
            :get-all-recipes
            :get-recipes-starting-with
            :get-recipes-by-tag
+           :get-recipes-by-search-query
            :create-recipe
            :update-recipe
            :delete-recipe
@@ -50,6 +51,14 @@
                                                                       (where (:= :recipes_tags.tag_id (getf the-tag :id))) 
                                                                       (order-by :recipes.title))))
         (list))))
+
+(defun get-recipes-by-search-query (query)
+  (let ((q (str:concat "%" query "%")))
+    (with-connection (db) (retrieve-all (select :* (from :recipes) 
+                                                   (where (:or (:like :title q)
+                                                               (:like :ingredients q)
+                                                               (:like :directions q)))
+                                                   (order-by :title))))))
 
 (defun create-recipe (the-recipe)
   (when (get-recipe-by-slug (getf the-recipe :slug)) (setf (getf the-recipe :slug) (incr-slug (getf the-recipe :slug) 1)))
