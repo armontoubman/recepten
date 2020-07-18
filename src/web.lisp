@@ -63,6 +63,15 @@
          (redirect-url (concatenate 'string "/recipe/show/" the-slug)))
     (redirect redirect-url)))
 
+(defroute ("/recipe/delete/:slug") (&key slug)
+  (let ((the-recipe (get-recipe-by-slug slug)))
+    (render #P"recipe-confirm-delete.html" `(:recipe ,the-recipe))))
+
+(defroute ("/recipe/delete/:slug" :method :POST) (&key slug)
+  (let ((the-recipe (get-recipe-by-slug slug)))
+    (delete-recipe the-recipe)
+    (redirect "/")))
+
 (defroute ("/recipes") ()
   (render #P"recipes-index.html" `(:letters ,*the-alphabet*)))
 

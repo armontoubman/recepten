@@ -15,6 +15,7 @@
            :get-recipes-by-tag
            :create-recipe
            :update-recipe
+           :delete-recipe
            :get-all-tags-like
            :get-tag-by-tag
            :get-tags-starting-with))
@@ -81,6 +82,11 @@
                                                     (where (:= :id (getf the-recipe :id)))))
                               (associate-tags-with-recipe the-recipe (loop for the-tag in (getf the-recipe :tags) collect (create-tag the-tag)))))
   (getf the-recipe :slug))
+
+(defun delete-recipe (the-recipe)
+  (with-connection (db) (execute (delete-from :recipes (where (:= :id (getf the-recipe :id)))))
+                        (execute (delete-from :recipes_tags (where (:= :recipe_id (getf the-recipe :id)))))))
+  
 
 ;;;; tags
 
