@@ -1,0 +1,25 @@
+{% extends "layouts/default.html" %}
+{% block title %}{{ recipe.title }}{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>{{ recipe.title }}</h1>
+  <p>{% for tag in recipe.tags %}<span>{{ tag.tag }} </span>{% endfor %}</p>
+  
+  <p>Bereidingstijd: <span class="badge">
+    {{ recipe.cooking-time|total-minutes-to-only-hours }} uur 
+    {{ recipe.cooking-time|total-minutes-to-only-minutes }} min
+  </span> 
+  Wachttijd: <span class="badge">
+    {{ recipe.waiting-time|total-minutes-to-only-hours }} uur 
+    {{ recipe.waiting-time|total-minutes-to-only-minutes }} min
+  </span></p>
+  <h4>Ingrediënten voor {{ recipe.servings }} porties</h4>
+  {{ recipe.ingredients|markdown|safe }}
+  <h4>Bereiding</h4>
+  {{ recipe.directions|markdown|safe }}
+  <h4>Opmerkingen</h4>
+  {{ recipe.comments|markdown|safe }}
+</div>
+
+<script type="text/javascript">window.print();</script>
+{% endblock %}

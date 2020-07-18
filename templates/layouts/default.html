@@ -18,6 +18,8 @@
   <link rel="stylesheet" type="text/css" media="screen" href="/css/main.css"/>
 </head>
 <body>
+  {% if no-nav %}
+  {% else %}
   <div class="navbar navbar-default">
     <div class="container">
       <div class="navbar-header">
@@ -50,6 +52,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
   {% block content %}{% endblock %}
 </body>
 </html>

@@ -72,6 +72,10 @@
     (delete-recipe the-recipe)
     (redirect "/")))
 
+(defroute ("/recipe/print/:slug") (&key slug)
+  (let ((the-recipe (get-recipe-by-slug slug)))
+    (render #P"recipe-print.html" `(:recipe ,the-recipe :no-nav ,t))))
+
 (defroute ("/recipes") ()
   (render #P"recipes-index.html" `(:letters ,*the-alphabet*)))
 
