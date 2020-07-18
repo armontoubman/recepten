@@ -1,0 +1,12 @@
+{% extends "layouts/default.html" %}
+{% block title %}Tags per letter{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Tags per letter</h1>
+  <p class="text-center">
+  {% for letter in letters %}
+    <span><a href="/tags/{{ letter|upper }}" class="btn btn-default">{{ letter|upper }}</a></span>
+  {% endfor %}
+  </p>
+</div>
+{% endblock %}

@@ -16,7 +16,8 @@
            :create-recipe
            :update-recipe
            :get-all-tags-like
-           :get-tag-by-tag))
+           :get-tag-by-tag
+           :get-tags-starting-with))
 (in-package :recepten.recipe-repo)
 
 ;;;; recipes
@@ -96,6 +97,10 @@
 
 (defun get-tag-by-tag (tag)
   (with-connection (db) (retrieve-one (select :* (from :tags) (where (:= :tag tag))))))
+
+(defun get-tags-starting-with (letter)
+  (let ((q (str:concat letter "%")))
+    (with-connection (db) (retrieve-all (select :* (from :tags) (where (:like :tag q)) (order-by :tag))))))
 
 (defun create-tag (the-tag)
    (with-connection (db) 

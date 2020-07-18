@@ -27,6 +27,8 @@
 ;;
 ;; Routing rules
 
+(defvar *the-alphabet* (loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char)))
+
 (defroute "/" ()
   (let ((random-recipe (get-random-recipe))
         (recipe-count (get-recipe-count)))
@@ -62,18 +64,27 @@
     (redirect redirect-url)))
 
 (defroute ("/recipes") ()
-  (render #P"recipes-index.html" `(:letters ,(loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char)))))
+  (render #P"recipes-index.html" `(:letters ,*the-alphabet*)))
 
 (defroute ("/recipes/:letter") (&key letter)
   (let* ((recipes (get-recipes-starting-with letter)))
     (render #P"recipes-per-letter.html" `(:recipes ,recipes
                                           :current-letter ,letter
-                                          :letters ,(loop for char across "abcdefghijklmnopqrstuvwxyz" collect (string char))))))
+                                          :letters ,*the-alphabet*))))
 
 (defroute ("/tag/:tag") (&key tag)
   (let* ((recipes (get-recipes-by-tag tag)))
     (render #P"recipes-per-tag.html" `(:recipes ,recipes
                                        :tag ,tag))))
+
+(defroute ("/tags") ()
+  (render #P"tags-index.html" `(:letters ,*the-alphabet*)))
+
+(defroute ("/tags/:letter") (&key letter)
+  (let* ((tags (get-tags-starting-with letter)))
+    (render #P"tags-per-letter.html" `(:tags ,tags
+                                       :current-letter ,letter
+                                       :letters ,*the-alphabet*))))
 
 
 (defroute ("/ajax/recipe-tags-autocomplete") (&key _parsed)

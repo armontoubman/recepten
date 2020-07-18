@@ -1,0 +1,19 @@
+{% extends "layouts/default.html" %}
+{% block title %}Tags per letter{% endblock %}
+{% block content %}
+<div class="container">
+  <h1>Tags per letter</h1>
+  <p class="text-center">
+  {% for letter in letters %}
+    <span><a href="/tags/{{ letter|upper }}" class="btn btn-default">{{ letter|upper }}</a></span>
+  {% endfor %}
+  </p>
+  <h1>{{ current-letter }}</h1>
+  <p>{{ tags|length }} recepten gevonden</p>
+  <p>
+  {% for tag in tags %}
+    <ul><li><a class="btn btn-default" role="button" href="/tag/{{ tag.tag }}">{{ tag.tag }}</a></li></ul>
+  {% endfor %}
+  </p>
+</div>
+{% endblock %}
