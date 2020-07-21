@@ -31,7 +31,8 @@
           :tags (loop for tag in (str:words (str:trim (accesses the-recipe "tags"))) collect `(:tag ,tag)))))
 
 (defun create-recipe-from-import (source url)
-  (cond ((string= source "allerhande") (import-recipe-from-allerhande url))))
+  (cond ((string= source "allerhande") (import-recipe-from-allerhande url))
+        ((string= source "jumbo") (import-recipe-from-jumbo url))))
 
 (defun slugify (the-string)
   (let* ((the-string (str:trim the-string))
