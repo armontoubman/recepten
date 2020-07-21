@@ -23,7 +23,7 @@
   `(:application-root ,(asdf:component-pathname (asdf:find-system :recepten))))
 
 ;; start with: APP_ENV=development clackup --address 0.0.0.0 app.lisp
-;; or with: echo "export APP_ENV=development" >> ~/.bashrc
+;; or with: echo "export APP_ENV=\"development\"" >> ~/.bashrc
 ;;          (ql:quickload :recepten) (recepten:start :port 5000)
 (defconfig |development|
   `(:debug T
