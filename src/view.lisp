@@ -28,12 +28,16 @@
       output))
 
 (def-filter :total-minutes-to-only-hours (val)
-  (multiple-value-bind (quotient remainder) (truncate val 60)
-    quotient))
+  (if val
+      (multiple-value-bind (quotient remainder) (truncate val 60)
+        quotient)
+      0))
 
 (def-filter :total-minutes-to-only-minutes (val)
-  (multiple-value-bind (quotient remainder) (truncate val 60)
-    remainder))
+  (if val
+      (multiple-value-bind (quotient remainder) (truncate val 60)
+        remainder)
+      0))
 
 
 (defun render (template-path &optional env)

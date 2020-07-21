@@ -4,12 +4,14 @@
         :caveman2
         :recepten.config
         :recepten.db
+        :recepten.importers
         :datafly
         :sxql
         :alexandria
         :ppcre
         :access)
-  (:export :create-recipe-from-form))
+  (:export :create-recipe-from-form
+           :create-recipe-from-import))
 (in-package :recepten.logic)
 
 (defun create-recipe-from-form (the-recipe &optional id) ; the-recipe = alist
@@ -27,6 +29,9 @@
           :slug (slugify title)
           :comments (accesses the-recipe "comments")
           :tags (loop for tag in (str:words (str:trim (accesses the-recipe "tags"))) collect `(:tag ,tag)))))
+
+(defun create-recipe-from-import (source url)
+  (cond ((string= source "allerhande") (import-recipe-from-allerhande url))))
 
 (defun slugify (the-string)
   (let* ((the-string (str:trim the-string))

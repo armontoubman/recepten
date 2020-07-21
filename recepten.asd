@@ -27,7 +27,14 @@
                "access"
                
                ;; for markdown formatting
-               "3bmd")
+               "3bmd"
+               
+               ;; web scraping
+               "dexador"
+               "lquery"
+               
+               ;; unit tests
+               "rove")
                
   :components ((:module "src"
                 :components
@@ -37,7 +44,8 @@
                  (:file "db" :depends-on ("config"))
                  (:file "config")
                  (:file "recipe-repo" :depends-on ("config" "db"))
-                 (:file "logic" :depends-on ("recipe-repo")))))
+                 (:file "logic" :depends-on ("recipe-repo" "importers"))
+                 (:file "importers"))))
 
   :description ""
   :in-order-to ((test-op (test-op "recepten-test"))))

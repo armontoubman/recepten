@@ -80,6 +80,9 @@
   (let ((recipes (get-recipes-by-search-query |q|)))
     (render #P"recipe-search.html" `(:query ,|q| :recipes ,recipes))))
 
+(defroute ("/recipe/import") ()
+  (render #P"recipe-import.html"))
+
 (defroute ("/recipes") ()
   (render #P"recipes-index.html" `(:letters ,*the-alphabet*)))
 
@@ -103,14 +106,16 @@
                                        :current-letter ,letter
                                        :letters ,*the-alphabet*))))
 
-
 (defroute ("/ajax/recipe-tags-autocomplete") (&key _parsed)
   (let ((q (accesses _parsed "term")))
     (if (or (not q) (string= q ""))
       (render-json (list))
       (let ((tags (get-all-tags-like q)))
         (render-json (loop for tag in tags collect (accesses tag :tag)))))))
-    
+
+(defroute ("/ajax/recipe-import") (&key _parsed)
+  (render-json (create-recipe-from-import (accesses _parsed "importsource") (accesses _parsed "importurl"))))
+
 
 ;;
 ;; Error pages
