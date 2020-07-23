@@ -19,7 +19,9 @@
            :delete-recipe
            :get-all-tags-like
            :get-tag-by-tag
-           :get-tags-starting-with))
+           :get-tags-starting-with
+           :subsume-tag
+           :update-tag))
 (in-package :recepten.recipe-repo)
 
 ;;;; recipes
@@ -128,7 +130,29 @@
                         (loop for the-tag in the-tags do (execute (insert-into :recipes_tags (set= :recipe_id (getf the-recipe :id)
                                                                                                    :tag_id (getf the-tag :id)))))))
                         
+;; TODO: fix inconsistent use of "tag" meaning, string or plist
+(defun subsume-tag (old-tag-tag new-tag-tag)
+  (with-connection (db)
+    (let* ((old-tag (get-tag-by-tag old-tag-tag))
+           (new-tag (get-tag-by-tag new-tag-tag)))
+      (loop for recipe in (get-recipes-by-tag old-tag-tag)
+        do (let* ((recipe-tags (get-tags-by-recipe recipe))
+                  (has-old-tag (loop for tag in recipe-tags thereis (same-id-p tag old-tag)))
+                  (has-new-tag (loop for tag in recipe-tags thereis (same-id-p tag new-tag))))
+             (if (and has-old-tag has-new-tag)
+                 ; recipe already has new-tag, so only remove old-tag association
+                 (execute (delete-from :recipes_tags (where (:and (:= :tag_id (getf old-tag :id))
+                                                                 (:= :recipe_id (getf recipe :id))))))
+                 ; recipe does not have new-tag, so update the association
+                 (execute (update :recipes_tags (set= :tag_id (getf new-tag :id))
+                                     (where (:and (:= :tag_id (getf old-tag :id))
+                                                  (:= :recipe_id (getf recipe :id)))))))))
+        ; anyway drop the old tag
+        (execute (delete-from :tags (where (:= :id (getf old-tag :id))))))))
 
+(defun update-tag (old-tag-tag new-tag-tag)
+  (with-connection (db)
+    (execute (update :tags (set= :tag new-tag-tag) (where (:= :tag old-tag-tag))))))
 
 
 
@@ -139,3 +163,6 @@
        (if (get-recipe-by-slug new-slug)
            (incr-slug orig-slug (+ n 1))
            new-slug)))
+
+(defun same-id-p (a b)
+  (= (getf a :id) (getf b :id)))

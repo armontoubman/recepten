@@ -97,6 +97,15 @@
     (render #P"recipes-per-tag.html" `(:recipes ,recipes
                                        :tag ,tag))))
 
+(defroute ("/tag/edit/:tag") (&key tag)
+  (let* ((the-tag (get-tag-by-tag tag)))
+    (render #P"tag-edit.html" `(:tag ,the-tag))))
+
+(defroute ("/tag/rename/:tag" :method :POST) (&key tag _parsed)
+  (let ((new-tag (accesses _parsed "new-tag")))
+    (rename-tag tag new-tag)
+    (redirect (str:concat "/tag/" new-tag))))
+
 (defroute ("/tags") ()
   (render #P"tags-index.html" `(:letters ,*the-alphabet*)))
 

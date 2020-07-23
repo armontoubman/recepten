@@ -2,6 +2,11 @@
 {% block title %}Recepten met tag {{ tag }}{% endblock %}
 {% block content %}
 <div class="container">
+  <div class="pull-right">
+    <div class="list-group">
+      <a class="list-group-item" href="/tag/edit/{{ tag }}"><i class="glyphicon glyphicon-pencil"></i> Hernoem tag</a>
+    </div>
+  </div>
   <h1>Recepten met tag {{ tag }}</h1>
   <h1>{{ current-letter }}</h1>
   <p>{{ recipes|length }} recepten gevonden</p>

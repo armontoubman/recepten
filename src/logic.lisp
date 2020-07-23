@@ -5,13 +5,15 @@
         :recepten.config
         :recepten.db
         :recepten.importers
+        :recepten.recipe-repo
         :datafly
         :sxql
         :alexandria
         :ppcre
         :access)
   (:export :create-recipe-from-form
-           :create-recipe-from-import))
+           :create-recipe-from-import
+           :rename-tag))
 (in-package :recepten.logic)
 
 (defun create-recipe-from-form (the-recipe &optional id) ; the-recipe = alist
@@ -39,6 +41,20 @@
          (the-string (ppcre:regex-replace-all "&" the-string "-and-"))
          (the-string (ppcre:regex-replace-all "[\\s\\W-]+" the-string "-")))
     the-string))
+
+(defun rename-tag (old-name new-name)
+  (let ((old-tag (get-tag-by-tag old-name))
+        (new-tag (get-tag-by-tag new-name)))
+    (if old-tag
+      ; tag to change actually exists
+        (progn
+          (if new-tag
+              ; requested tag already exists
+              (subsume-tag old-name new-name)
+              ; request tag does not exist, rename suffices
+              (update-tag old-name new-name))
+          new-tag)
+        nil)))
 
 ;;;; private
 
