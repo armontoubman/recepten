@@ -88,7 +88,8 @@
 ;;; section: jumbo
 
 (defun import-recipe-from-jumbo (url)
-  (let* ((html (ignore-errors (dex:get url)))
+  (let* ((cache-prefix "http://webcache.googleusercontent.com/search?q=cache:") ; dex:get jumbo directly fails
+         (html (ignore-errors (dex:get (str:concat cache-prefix url))))
          (doc (lquery:$ (initialize (or html "<html/>"))))
          (title (jumbo-title doc))
          (tags (jumbo-tags doc))
