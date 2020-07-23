@@ -75,7 +75,7 @@
 (defun parse-allerhande-waiting-times (strings)
   (loop for s in strings 
         when (or (str:ends-with-p "oventijd" s) 
-                 (str:ends-with-p "wachtten" s))
+                 (str:ends-with-p "wachten" s))
         sum (extract-allerhande-time s)))
 
 (defun extract-allerhande-time (s)
